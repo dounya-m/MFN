@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const api = '/api/MFN/'
+const api = '/api/mfn/'
 
 router.use(`${api}admin`, require('./admin/AdmineRoute'))
 router.use(`${api}user`, require('./user/UserRoutes'))
