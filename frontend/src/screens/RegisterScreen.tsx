@@ -1,4 +1,5 @@
 import React, { memo, useState } from 'react';
+import { useRoute } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
@@ -14,58 +15,106 @@ import {
   nameValidator,
 } from '../core/utils';
 
+
 type Props = {
   navigation: Navigation;
 };
 
 const RegisterScreen = ({ navigation }: Props) => {
-  const [name, setName] = useState({ value: '', error: '' });
-  const [email, setEmail] = useState({ value: '', error: '' });
+
+
+
+  const [rs, setRs] = useState({ value: '', error: '' });
+  const [tele, setTele] = useState({ value: '', error: '' });
+  const [address, setAdress] = useState({ value: '', error: '' });
+  const [ice, setIce] = useState({ value: '', error: '' });
+  const [manadger, setManadger] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
 
   const _onSignUpPressed = () => {
-    const nameError = nameValidator(name.value);
-    const emailError = emailValidator(email.value);
+    const rsError = nameValidator(rs.value);
+    const teleError = emailValidator(tele.value);
+    const addressError = emailValidator(address.value);
+    const iceError = emailValidator(ice.value);
+    const manadgerError = emailValidator(manadger.value);
     const passwordError = passwordValidator(password.value);
 
-    if (emailError || passwordError || nameError) {
-      setName({ ...name, error: nameError });
-      setEmail({ ...email, error: emailError });
+    if (rsError || teleError || addressError || iceError || manadgerError || passwordError) {
+      setRs({ ...rs, error: rsError });
+      setTele({ ...tele, error: teleError });
+      setAdress({ ...address, error: addressError });
+      setIce({ ...ice, error: iceError });
+      setManadger({ ...manadger, error: manadgerError });
       setPassword({ ...password, error: passwordError });
       return;
     }
 
     navigation.navigate('Dashboard');
   };
+  const route = useRoute();
+  const { region } = route.params;
+  const { latitude, longitude } = region;
 
   return (
     <Background>
-      <BackButton goBack={() => navigation.navigate('HomeScreen')} />
+      <Text>Latitude: {latitude}</Text>
+      <Text>Longitude: {longitude}</Text>
+      <BackButton goBack={() => navigation.navigate('Dashboard')} />
 
       <Logo />
 
       <Header>Create Account</Header>
 
       <TextInput
-        label="Name"
+        label="raison sociale"
         returnKeyType="next"
-        value={name.value}
-        onChangeText={text => setName({ value: text, error: '' })}
-        error={!!name.error}
-        errorText={name.error}
+        value={rs.value}
+        onChangeText={text => setRs({ value: text, error: '' })}
+        error={!!rs.error}
+        errorText={rs.error}
+      />
+
+<TextInput
+        label="Téléphone"
+        returnKeyType="next"
+        value={tele.value}
+        onChangeText={text => setTele({ value: text, error: '' })}
+        error={!!tele.error}
+        errorText={tele.error}
+        autoCapitalize="none"
+        keyboardType="numeric"
       />
 
       <TextInput
-        label="Email"
+        label="Address"
         returnKeyType="next"
-        value={email.value}
-        onChangeText={text => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
+        value={address.value}
+        onChangeText={text => setAdress({ value: text, error: '' })}
+        error={!!address.error}
+        errorText={address.error}
         autoCapitalize="none"
         // autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
+
+      />
+
+<TextInput
+        label="ICE"
+        returnKeyType="next"
+        value={ice.value}
+        onChangeText={text => setIce({ value: text, error: '' })}
+        error={!!ice.error}
+        errorText={ice.error}
+        autoCapitalize="none"
+        // autoCompleteType="email"
+      />
+      <TextInput
+        label="Manadger"
+        returnKeyType="next"
+        value={manadger.value}
+        onChangeText={text => setManadger({ value: text, error: '' })}
+        error={!!manadger.error}
+        errorText={manadger.error}
+        autoCapitalize="none"
       />
 
       <TextInput

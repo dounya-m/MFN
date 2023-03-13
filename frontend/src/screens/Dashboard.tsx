@@ -1,5 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Navigation } from '../types';
 import MapView, { Region, Marker } from 'react-native-maps';
 import Button from '../components/Button';
@@ -15,19 +16,15 @@ type Props = {
 interface Location {
   latitude: number;
   longitude: number;
+  id: number;
 }
 
+const navigation = useNavigation();
 
 const Dashboard = ({ navigation, setErrorMsg }: Props) => {
   // const [searchQuery, setSearchQuery] = useState('');
   // const [region, setRegion] = useState<Region | undefined>();
 
-      const newRegion: Region = {
-        latitude: 32.300815,
-        longitude: -9.227203,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
       const [region, setRegion] = useState({
         latitude: 32.300815,
         longitude: -9.227203,
@@ -39,7 +36,12 @@ const Dashboard = ({ navigation, setErrorMsg }: Props) => {
     <View style={styles.container}>
     <MapView
       style={styles.map}
-      initialRegion={newRegion}
+      initialRegion={{
+        latitude: 32.300815,
+        longitude: -9.227203,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }}
       //onRegionChangeComplete runs when the user stops dragging MapView
       onRegionChangeComplete={(region) => setRegion(region)}
     />
@@ -47,9 +49,14 @@ const Dashboard = ({ navigation, setErrorMsg }: Props) => {
     {/*Display user's current region:*/}
     <Text style={styles.text}>Current latitude: {region.latitude}</Text>
     <Text style={styles.text}>Current longitude: {region.longitude}</Text>
-    <Button mode="outlined" onPress={() => navigation.navigate('Dashboard')}>
-      Guest
+    <Button
+  mode="outlined"
+  //onePress navigate with the current region to the next screen
+  onPress={() => navigation.navigate('RegisterScreen', { region })}
+    >
+      Register
     </Button>
+
   </View>
   );
 };
