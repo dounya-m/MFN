@@ -1,6 +1,5 @@
-import React, { memo, useState } from 'react';
-import { useRoute } from '@react-navigation/native';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
 import Header from '../components/Header';
@@ -9,78 +8,109 @@ import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import { Navigation } from '../types';
-import {
-  emailValidator,
-  passwordValidator,
-  nameValidator,
-} from '../core/utils';
-
+import { RouteProp } from '@react-navigation/native';
+import {  emailValidator,  passwordValidator, nameValidator,} from '../core/utils';
+import  {RootStackParamList}  from '../types';
+import axios from 'axios';
 
 type Props = {
   navigation: Navigation;
+  route: RouteProp<RootStackParamList, 'RegisterScreen'>;
 };
 
-const RegisterScreen = ({ navigation }: Props) => {
+interface RegistrationData {
+  rs: string;
+  tele: string;
+  address: string;
+  ice: string;
+  manadger: string;
+  password: string;
+}
 
+const RegisterScreen = ({route, navigation }: Props) => {
 
+  const [formData, setFormData] = useState<RegistrationData>({
+    rs: '',
+    tele: '',
+    address: '',
+    ice: '',
+    manadger: '',
+    password: '',
+  });
 
-  const [rs, setRs] = useState({ value: '', error: '' });
-  const [tele, setTele] = useState({ value: '', error: '' });
-  const [address, setAdress] = useState({ value: '', error: '' });
-  const [ice, setIce] = useState({ value: '', error: '' });
-  const [manadger, setManadger] = useState({ value: '', error: '' });
-  const [password, setPassword] = useState({ value: '', error: '' });
-
-  const _onSignUpPressed = () => {
-    const rsError = nameValidator(rs.value);
-    const teleError = emailValidator(tele.value);
-    const addressError = emailValidator(address.value);
-    const iceError = emailValidator(ice.value);
-    const manadgerError = emailValidator(manadger.value);
-    const passwordError = passwordValidator(password.value);
-
-    if (rsError || teleError || addressError || iceError || manadgerError || passwordError) {
-      setRs({ ...rs, error: rsError });
-      setTele({ ...tele, error: teleError });
-      setAdress({ ...address, error: addressError });
-      setIce({ ...ice, error: iceError });
-      setManadger({ ...manadger, error: manadgerError });
-      setPassword({ ...password, error: passwordError });
-      return;
-    }
-
-    navigation.navigate('Dashboard');
+  const handleInputChange = (key: keyof RegistrationData, value: string) => {
+    setFormData({
+      ...formData,
+      [key]: value,
+    });
   };
-  const route = useRoute();
-  const { region } = route.params;
-  const { latitude, longitude } = region;
+
+  const handleRegistration = () => {
+    console.log(formData);
+  
+    fetch('http://192.168.10.23:5000/api/mfn/company', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        rs: formData.rs,
+        tele: formData.tele,
+        address: formData.address,
+        ice: formData.ice,
+        manadger: formData.manadger,
+        password: formData.password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+// const fetchApi = async () => {
+//   try {
+//     const response = await axios.get('http://192.168.10.23:5000/api/mfn/company')
+//     console.log(response.data)
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
+// useEffect(() => {
+//   fetchApi()
+//   console.log();
+  
+// }, []);
+
+  
 
   return (
-    <Background>
-      <Text>Latitude: {latitude}</Text>
-      <Text>Longitude: {longitude}</Text>
+    <ScrollView>
+      <Background>
+      <Text></Text>
+      <Text></Text>
+
       <BackButton goBack={() => navigation.navigate('Dashboard')} />
 
       <Logo />
 
-      <Header>Create Account</Header>
+      <Header>Add Your Copany</Header>
 
       <TextInput
         label="raison sociale"
         returnKeyType="next"
-        value={rs.value}
-        onChangeText={text => setRs({ value: text, error: '' })}
-        error={!!rs.error}
-        errorText={rs.error}
+        value={formData.rs}
+        onChangeText={(value) => handleInputChange('rs', value)}
       />
 
 <TextInput
         label="Téléphone"
         returnKeyType="next"
-        value={tele.value}
-        onChangeText={text => setTele({ value: text, error: '' })}
-        error={!!tele.error}
-        errorText={tele.error}
+        value={formData.tele}
+        onChangeText={(value) => handleInputChange('tele', value)}
         autoCapitalize="none"
         keyboardType="numeric"
       />
@@ -88,46 +118,36 @@ const RegisterScreen = ({ navigation }: Props) => {
       <TextInput
         label="Address"
         returnKeyType="next"
-        value={address.value}
-        onChangeText={text => setAdress({ value: text, error: '' })}
-        error={!!address.error}
-        errorText={address.error}
+        value={formData.address}
+        onChangeText={(value) => handleInputChange('address', value)}
         autoCapitalize="none"
-        // autoCompleteType="email"
-
       />
 
 <TextInput
         label="ICE"
         returnKeyType="next"
-        value={ice.value}
-        onChangeText={text => setIce({ value: text, error: '' })}
-        error={!!ice.error}
-        errorText={ice.error}
+        value={formData.ice}
+        onChangeText={(value) => handleInputChange('ice', value)}
         autoCapitalize="none"
         // autoCompleteType="email"
       />
       <TextInput
         label="Manadger"
         returnKeyType="next"
-        value={manadger.value}
-        onChangeText={text => setManadger({ value: text, error: '' })}
-        error={!!manadger.error}
-        errorText={manadger.error}
+        value={formData.manadger}
+        onChangeText={(value) => handleInputChange('manadger', value)}
         autoCapitalize="none"
       />
 
       <TextInput
         label="Password"
         returnKeyType="done"
-        value={password.value}
-        onChangeText={text => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
+        value={formData.password}
+        onChangeText={(value) => handleInputChange('password', value)}
         secureTextEntry
       />
 
-      <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
+      <Button mode="contained"  onPress={() => handleRegistration()} style={styles.button}>
         Sign Up
       </Button>
 
@@ -138,6 +158,7 @@ const RegisterScreen = ({ navigation }: Props) => {
         </TouchableOpacity>
       </View>
     </Background>
+    </ScrollView>
   );
 };
 
