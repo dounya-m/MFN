@@ -1,16 +1,19 @@
 import React, { memo } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, Text,StyleSheet, View } from 'react-native';
 
 const Logo = () => (
-  <Image source={require('../assets/logo.png')} style={styles.image} />
+  <View>
+    <Text style={styles.text}>MFN</Text>
+  </View>
 );
 
 const styles = StyleSheet.create({
-  image: {
-    width: 128,
-    height: 128,
-    marginBottom: 12,
-  },
+  text:{
+    fontSize: 50,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#6D00C7',
+  }
 });
 
 export default memo(Logo);

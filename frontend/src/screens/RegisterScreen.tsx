@@ -1,5 +1,5 @@
-import React, { memo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
 import Header from '../components/Header';
@@ -8,77 +8,146 @@ import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import { Navigation } from '../types';
-import {
-  emailValidator,
-  passwordValidator,
-  nameValidator,
-} from '../core/utils';
+import { RouteProp } from '@react-navigation/native';
+import {  emailValidator,  passwordValidator, nameValidator,} from '../core/utils';
+import  {RootStackParamList}  from '../types';
+import axios from 'axios';
 
 type Props = {
   navigation: Navigation;
+  route: RouteProp<RootStackParamList, 'RegisterScreen'>;
 };
 
-const RegisterScreen = ({ navigation }: Props) => {
-  const [name, setName] = useState({ value: '', error: '' });
-  const [email, setEmail] = useState({ value: '', error: '' });
-  const [password, setPassword] = useState({ value: '', error: '' });
+interface RegistrationData {
+  rs: string;
+  tele: string;
+  address: string;
+  ice: string;
+  manadger: string;
+  password: string;
+}
 
-  const _onSignUpPressed = () => {
-    const nameError = nameValidator(name.value);
-    const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
+const RegisterScreen = ({route, navigation }: Props) => {
 
-    if (emailError || passwordError || nameError) {
-      setName({ ...name, error: nameError });
-      setEmail({ ...email, error: emailError });
-      setPassword({ ...password, error: passwordError });
-      return;
-    }
+  const [formData, setFormData] = useState<RegistrationData>({
+    rs: '',
+    tele: '',
+    address: '',
+    ice: '',
+    manadger: '',
+    password: '',
+  });
 
-    navigation.navigate('Dashboard');
+  const handleInputChange = (key: keyof RegistrationData, value: string) => {
+    setFormData({
+      ...formData,
+      [key]: value,
+    });
   };
 
+  const handleRegistration = () => {
+    console.log(formData);
+  
+    fetch('http://192.168.10.23:5000/api/mfn/company', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        rs: formData.rs,
+        tele: formData.tele,
+        address: formData.address,
+        ice: formData.ice,
+        manadger: formData.manadger,
+        password: formData.password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+// const fetchApi = async () => {
+//   try {
+//     const response = await axios.get('http://192.168.10.23:5000/api/mfn/company')
+//     console.log(response.data)
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
+// useEffect(() => {
+//   fetchApi()
+//   console.log();
+  
+// }, []);
+
+  
+
   return (
-    <Background>
-      <BackButton goBack={() => navigation.navigate('HomeScreen')} />
+    <ScrollView>
+      <Background>
+      <Text></Text>
+      <Text></Text>
+
+      <BackButton goBack={() => navigation.navigate('Dashboard')} />
 
       <Logo />
 
-      <Header>Create Account</Header>
+      <Header>Add Your Copany</Header>
 
       <TextInput
-        label="Name"
+        label="raison sociale"
         returnKeyType="next"
-        value={name.value}
-        onChangeText={text => setName({ value: text, error: '' })}
-        error={!!name.error}
-        errorText={name.error}
+        value={formData.rs}
+        onChangeText={(value) => handleInputChange('rs', value)}
+      />
+
+<TextInput
+        label="Téléphone"
+        returnKeyType="next"
+        value={formData.tele}
+        onChangeText={(value) => handleInputChange('tele', value)}
+        autoCapitalize="none"
+        keyboardType="numeric"
       />
 
       <TextInput
-        label="Email"
+        label="Address"
         returnKeyType="next"
-        value={email.value}
-        onChangeText={text => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
+        value={formData.address}
+        onChangeText={(value) => handleInputChange('address', value)}
+        autoCapitalize="none"
+      />
+
+<TextInput
+        label="ICE"
+        returnKeyType="next"
+        value={formData.ice}
+        onChangeText={(value) => handleInputChange('ice', value)}
         autoCapitalize="none"
         // autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
+      />
+      <TextInput
+        label="Manadger"
+        returnKeyType="next"
+        value={formData.manadger}
+        onChangeText={(value) => handleInputChange('manadger', value)}
+        autoCapitalize="none"
       />
 
       <TextInput
         label="Password"
         returnKeyType="done"
-        value={password.value}
-        onChangeText={text => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
+        value={formData.password}
+        onChangeText={(value) => handleInputChange('password', value)}
         secureTextEntry
       />
 
-      <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
+      <Button mode="contained"  onPress={() => handleRegistration()} style={styles.button}>
         Sign Up
       </Button>
 
@@ -89,6 +158,7 @@ const RegisterScreen = ({ navigation }: Props) => {
         </TouchableOpacity>
       </View>
     </Background>
+    </ScrollView>
   );
 };
 

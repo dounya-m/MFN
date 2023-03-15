@@ -1,56 +1,62 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Navigation } from '../types';
-import MapView, { Region, Marker } from 'react-native-maps';
+// import { Navigation } from '../types';
+import { NavigationProp, RouteProp } from '@react-navigation/native';
+import MapView, { Region } from 'react-native-maps';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
-import * as Location from 'expo-location'
+import  {RootStackParamList}  from '../types';
+
+
+
+// export type RootStackParamList = {
+//   Dashboard: { region: Region };
+//   RegisterScreen: { region: Region };
+//   HomeScreen: undefined;
+// };
 
 type Props = {
-  navigation: Navigation;
-  region: Region;
+  navigation: NavigationProp<RootStackParamList, 'Dashboard'>;
+  route: RouteProp<RootStackParamList, 'Dashboard'>;
   setErrorMsg: (msg: string) => void;
-  // enableHighAccuracy: boolean;
 };
-interface Location {
-  latitude: number;
-  longitude: number;
-}
+
+const Dashboard = ({ navigation }: Props) => {
+
+  const [region, setRegion] = useState({
+    latitude: 32.300815,
+    longitude: -9.227203,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  
 
 
-const Dashboard = ({ navigation, setErrorMsg }: Props) => {
-  // const [searchQuery, setSearchQuery] = useState('');
-  // const [region, setRegion] = useState<Region | undefined>();
-
-      const newRegion: Region = {
-        latitude: 32.300815,
-        longitude: -9.227203,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
-      const [region, setRegion] = useState({
-        latitude: 32.300815,
-        longitude: -9.227203,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
 
   return (
     <View style={styles.container}>
-    <MapView
-      style={styles.map}
-      initialRegion={newRegion}
-      //onRegionChangeComplete runs when the user stops dragging MapView
-      onRegionChangeComplete={(region) => setRegion(region)}
-    />
-    <BackButton goBack={() => navigation.navigate('HomeScreen')} />
-    {/*Display user's current region:*/}
-    <Text style={styles.text}>Current latitude: {region.latitude}</Text>
-    <Text style={styles.text}>Current longitude: {region.longitude}</Text>
-    <Button mode="outlined" onPress={() => navigation.navigate('Dashboard')}>
-      Guest
-    </Button>
-  </View>
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: 32.300815,
+          longitude: -9.227203,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+        onRegionChangeComplete={(region) => setRegion(region)}
+      />
+      <BackButton goBack={() => navigation.navigate('HomeScreen')} />
+      
+      <Text>Latitude: {region.latitude}</Text>
+      <Text>Longitude: {region.longitude}</Text>
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate('RegisterScreen', { region })}
+      >
+        Register
+      </Button>
+
+    </View>
   );
 };
 
