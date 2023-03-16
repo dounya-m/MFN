@@ -8,4 +8,5 @@ export type Navigation = {
     HomeScreen: undefined;
     Dashboard: { region: Region };
     RegisterScreen: { region: Region };
+    CompanyScreen: undefined;
   };

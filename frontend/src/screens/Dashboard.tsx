@@ -1,19 +1,14 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 // import { Navigation } from '../types';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
-import MapView, { Region } from 'react-native-maps';
+import MapView, { Region, Marker } from 'react-native-maps';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
 import  {RootStackParamList}  from '../types';
+import axios from 'axios';
 
 
-
-// export type RootStackParamList = {
-//   Dashboard: { region: Region };
-//   RegisterScreen: { region: Region };
-//   HomeScreen: undefined;
-// };
 
 type Props = {
   navigation: NavigationProp<RootStackParamList, 'Dashboard'>;
@@ -21,7 +16,17 @@ type Props = {
   setErrorMsg: (msg: string) => void;
 };
 
+interface RegistrationData {
+  rs: string;
+  tele: string;
+  address: string;
+  ice: string;
+  lat: string;
+  log: string;
+  password: string;
+}
 const Dashboard = ({ navigation }: Props) => {
+
 
   const [region, setRegion] = useState({
     latitude: 32.300815,
@@ -29,7 +34,24 @@ const Dashboard = ({ navigation }: Props) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  
+console.log(region);
+
+
+const [data, setData] = useState<RegistrationData[]>([]);
+useEffect(() => {
+  axios.get('http://192.168.10.23:5000/api/mfn/company')
+    .then((response) => {
+      setData(response.data);
+      console.log(response.data[0].lat);
+      
+    }
+    )
+    .catch((error) => {
+      console.log(error);
+    });
+}, []);
+
+
 
 
 
@@ -44,18 +66,36 @@ const Dashboard = ({ navigation }: Props) => {
           longitudeDelta: 0.0421,
         }}
         onRegionChangeComplete={(region) => setRegion(region)}
-      />
+      >
+        {data.length > 0 && data.map((marker: RegistrationData, index: number) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: parseFloat(marker.lat),
+              longitude: parseFloat(marker.log),
+            }}
+            title={marker.rs}
+            description={marker.address}
+          />
+        ))}
+
+      </MapView>
       <BackButton goBack={() => navigation.navigate('HomeScreen')} />
       
-      <Text>Latitude: {region.latitude}</Text>
-      <Text>Longitude: {region.longitude}</Text>
+      <Text style={styles.text}>Current latitude: {region.latitude}</Text>
+      <Text style={styles.text}>Current longitude: {region.longitude}</Text>
       <Button
         mode="contained"
         onPress={() => navigation.navigate('RegisterScreen', { region })}
       >
         Register
       </Button>
-
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate('CompanyScreen')}
+      >
+        Company
+      </Button>
     </View>
   );
 };

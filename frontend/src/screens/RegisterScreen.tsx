@@ -23,7 +23,8 @@ interface RegistrationData {
   tele: string;
   address: string;
   ice: string;
-  manadger: string;
+  lat: string;
+  log: string;
   password: string;
 }
 
@@ -34,56 +35,38 @@ const RegisterScreen = ({route, navigation }: Props) => {
     tele: '',
     address: '',
     ice: '',
-    manadger: '',
+    lat: '',
+    log: '',
     password: '',
   });
 
-  const handleInputChange = (key: keyof RegistrationData, value: string) => {
-    setFormData({
-      ...formData,
-      [key]: value,
-    });
+  const [error, setError] = useState('');
+
+  const handleInputChange = async(name: string, value: string) => {
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleRegistration = () => {
-    console.log(formData);
-  
-    fetch('http://192.168.10.23:5000/api/mfn/company', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        rs: formData.rs,
-        tele: formData.tele,
-        address: formData.address,
-        ice: formData.ice,
-        manadger: formData.manadger,
-        password: formData.password,
-      }),
+  console.log(formData);
+
+
+    axios.post('http://192.168.10.23:5000/api/mfn/company', {
+      rs: formData.rs,
+      tele: formData.tele,
+      address: formData.address,
+      ice: formData.ice,
+      lat: formData.lat,
+      log: formData.log,
+      password: formData.password,
     })
-      .then((response) => response.json())
-      .then((json) => {
-        console.log(json);
+      .then((response) => {
+        console.log(response);
+        navigation.navigate('Dashboard');
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
       });
   };
-// const fetchApi = async () => {
-//   try {
-//     const response = await axios.get('http://192.168.10.23:5000/api/mfn/company')
-//     console.log(response.data)
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
-// useEffect(() => {
-//   fetchApi()
-//   console.log();
-  
-// }, []);
 
   
 
@@ -131,11 +114,19 @@ const RegisterScreen = ({route, navigation }: Props) => {
         autoCapitalize="none"
         // autoCompleteType="email"
       />
-      <TextInput
-        label="Manadger"
+<TextInput
+        label="Latitude"
         returnKeyType="next"
-        value={formData.manadger}
-        onChangeText={(value) => handleInputChange('manadger', value)}
+        value={formData.lat}
+        onChangeText={(value) => handleInputChange('lat', value)}
+        autoCapitalize="none"
+      />
+
+<TextInput
+        label="Longitude"
+        returnKeyType="next"
+        value={formData.log}
+        onChangeText={(value) => handleInputChange('log', value)}
         autoCapitalize="none"
       />
 

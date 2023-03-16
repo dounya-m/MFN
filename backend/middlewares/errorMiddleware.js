@@ -1,11 +1,14 @@
 const erroHandler = (err, req, res, next) => {
-    const statusCode = res.statusCode ? res.statusCode : 500
-    res.status(statusCode)
-
-    res.json({
-        message: err.message,
-        stack: process.env.NODE_ENV === development ? err.stack : null
-    })
+    console.log("Middleware Error Hadnling");
+    const errStatus = err.statuCode || 500
+    const errMsg = err.message || 'Somting went wrong'
+    res.status(errStatus).json({
+        success: false,
+        status: errStatus,
+        message: errMsg,
+        stack: process.env.NODE_ENV === 'development'?err.stack : {} 
+    }) 
+    
 }
 
 module.exports = {
