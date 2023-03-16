@@ -20,7 +20,11 @@ const companySchema = new Schema({
         type: String,
         require: [true, 'please enter your ice']
     },
-    manadger:{
+    lat:{
+        type: String,
+        require: [true, 'please enter your manadger name']
+    },
+    log:{
         type: String,
         require: [true, 'please enter your manadger name']
     },

@@ -1,6 +1,6 @@
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import {  HomeScreen,  LoginScreen,  RegisterScreen,  ForgotPasswordScreen, Dashboard,} from './screens';
+import {  HomeScreen,  LoginScreen,  RegisterScreen,  ForgotPasswordScreen, Dashboard, CompanyScreen} from './screens';
 
 const RouterScreens = createStackNavigator(
   {
@@ -9,6 +9,7 @@ const RouterScreens = createStackNavigator(
     RegisterScreen,
     ForgotPasswordScreen,
     Dashboard,
+    CompanyScreen,
   },
   {
     initialRouteName: 'HomeScreen',

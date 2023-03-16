@@ -14,13 +14,13 @@ const HomeScreen = ({ navigation }: Props) => (
   <Background>
     <Logo />
 
-    <Header>Login Template</Header>
+    <Header>Login Page</Header>
 
     <Paragraph>
       The easiest way to start with your amazing application.
     </Paragraph>
-    <Button mode="contained" onPress={() => navigation.navigate('LoginScreen')}>
-      Login
+    <Button mode="contained" onPress={() => navigation.navigate('RegisterScreen')}>
+      Add Company
     </Button>
     <Button
       mode="outlined"
